@@ -1,0 +1,18 @@
+{
+  "name": "perf-off",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+	"tachometer:firefox": "tachometer --sample-size=100 --measure=global --browser=firefox-headless test-*",
+	"tachometer:safari": "tachometer --sample-size=100 --measure=global --browser=safari test-*",
+	"tachometer": "tachometer --sample-size=100 --measure=global --browser=chrome-headless test-*",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tachometer": "^0.7.1"
+  }
+}
