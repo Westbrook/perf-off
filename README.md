@@ -56,3 +56,95 @@ Before (or after) that, take a look at `test-get-name.html`, `test-get.html`, an
 - Are their alternate tests for custom elements?
 
 Let's make this bullet proof!
+
+## addendum by @titoBouzout, framework developer
+
+Thanks for listening and providing this test! Much appreciate. This section is
+representative of my feedback, as a framework author.
+
+I suppose this test has been at least partially motivated by my intention to
+propose a `isCustomElement` property in elements.
+
+While the
+[original test](https://github.com/Westbrook/perf-off/tree/35976028e19852f27e564e9af76baea1c85d272b)
+does provide the concept of `isCustomElement` in various forms, it is not
+representative of what different frameworks are doing in the _"real world"_.
+
+For this reason, and via this PR I am updating it to include:
+
+- What the results would look like if there were a `isCustomElement` property.
+  Which is my total point of being here.
+- Removing `console.log` calls from the _hot loop_, and instead accumulating the
+  result in an array. The reason for this is that `console` calls makes thing
+  slower when you are for example running benchmarks with the console open in
+  the browser. A user may opens the HTML in a browser and they will get
+  misleading results because of this call and reach the wrong conclusions. You
+  do not want to call `console` methods when benchmarking.
+- changed `indexOf('-')` to `includes('-')`, lets be idiomatic whenever
+  possible.
+- I have added a note on the flaws of using `-` as a check that wasn't
+  considered on the comments of it.
+
+About the data, while I understand that 10k sounds like a _good number_, lets
+try to be representative of the real world. So for this reason I always choose
+https://www.theguardian.com/
+
+The following code, tells me how many tags this website has created, and how
+many attributes are in total.
+
+```js
+const tagCount = document.all.length;
+
+let attributeCount = 0;
+for (const tag of [...document.all]) {
+	attributeCount += tag.attributes.length;
+}
+
+console.log(tagCount, attributeCount);
+```
+
+As of this writing, there are 5197 tags and 10176 attributes.
+
+For this reason I have updated the value to be 16k. One, for in case you want to
+know if something is a custom element, for _whatever reason_, and then one for
+each attribute.
+
+The reason why I am counting attributes, is that, if the element doesnt have a
+`node.isCustomElement` then that means that you should check if something _is a
+custom element_ before hand, pay the cost of this(because it may not be
+relevant), and then carry that value on on every function that you call, like
+for example `assignProp(node, attributeName, attributeValue, isCustomElement)`,
+because if we do not carry on the `isCustomElement` argument, then your
+signature becomes `assingProp(node, attributeName, attributeValue)`, which means
+you will be checking inside `assignProp` if something is a custom element or
+not, but if you carry on the value you already paid the cost of checking for
+this. Some, of the very popular frameworks, do this check `isCustomElement` for
+every prop. Hope that was clear, let me know if wasn't.
+
+So about the results I am getting with this. I opened each html file in a new
+browser profile. A new browser profile is relevant because extensions change the
+results. So make sure you are using a new browser profile. Then, I press `F5` as
+long as I need to get consistent results.
+
+The results are on the following table:
+
+| test                          | result | code                                       | comment                                   |
+| ----------------------------- | ------ | ------------------------------------------ | ----------------------------------------- |
+| test-get-name.html            | 13ms~  | `customElements.getName(node.constructor)` | framedrops, accurate?                     |
+| test-get.html                 | 12ms~  | `customElements.get(node.tagName)`         | framedrops, accurate?                     |
+| test-string-index-of.html     | 3ms~   | `node not builtin && node.includes("-")`   | (inaccurate)                              |
+| test-frameworks.html          | 2.5ms~ | `node.tagName.includes('-')`               | what frameworks do right now (inaccurate) |
+| test-proposal-frameworks.html | 1ms~   | `node.isCustomElement`                     | accurate                                  |
+
+As you can see, `test-proposal-frameworks.html` (what I am proposing as in
+`node.isCustomElement`), outperforms the next accurate result x12~, and does not
+framedrop.
+
+We must consider, that a full frame-drop, is spent exclusively on checking if
+something _is a custom element or not_. Obviously, that's not the only thing
+happening on the website. And remember, to add to this that we have already
+opted-in into having to do`importNode` vs `cloneNode`, that already made this
+frame longer than it should be.
+
+Note: None of this includes `is` checks, that as you can imagine... makes the
+whole thing even slower.

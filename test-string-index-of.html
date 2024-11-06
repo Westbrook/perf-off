@@ -1,9 +1,10 @@
 <div id="root"></div>
 <script type="module">
-	import { build } from './build.js';
+	import { build } from "./build.js";
 
+	/** Note: While this list attempts to not confuse built-in elements with custom-elements, it still fails to consider that users may use `<not-custom/>` without registering a custom element Do not use this.*/
 	function isCustomElement(tagName) {
-		if (tagName.indexOf('-') === -1) {
+		if (!tagName.includes("-")) {
 			return false;
 		}
 		switch (tagName) {
@@ -11,14 +12,14 @@
 			// We don't mind this list too much because we expect it to never grow.
 			// The alternative is to track the namespace in a few places which is convoluted.
 			// https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements-core-concepts
-			case 'annotation-xml':
-			case 'color-profile':
-			case 'font-face':
-			case 'font-face-src':
-			case 'font-face-uri':
-			case 'font-face-format':
-			case 'font-face-name':
-			case 'missing-glyph':
+			case "annotation-xml":
+			case "color-profile":
+			case "font-face":
+			case "font-face-src":
+			case "font-face-uri":
+			case "font-face-format":
+			case "font-face-name":
+			case "missing-glyph":
 				return false;
 			default:
 				return true;
@@ -27,11 +28,15 @@
 
 	const root = document.querySelector("#root");
 	build(root);
-	const all = [...document.querySelectorAll('*')];
+	const all = [...document.querySelectorAll("*")];
+	const results = [];
 	const start = performance.now();
 	for (let i = 0; i < all.length; i++) {
-		console.log(isCustomElement(all[i].tagName));
+		results.push(isCustomElement(all[i].tagName));
 	}
 	const end = performance.now();
 	window.tachometerResult = end - start;
+
+	console.log(window.tachometerResult);
+	document.body.textContent = window.tachometerResult;
 </script>

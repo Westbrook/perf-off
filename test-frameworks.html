@@ -1,13 +1,14 @@
 <div id="root"></div>
 <script type="module">
 	import { build } from "./build.js";
+
 	const root = document.querySelector("#root");
 	build(root);
 	const all = [...document.querySelectorAll("*")];
 	const results = [];
 	const start = performance.now();
 	for (let i = 0; i < all.length; i++) {
-		results.push(customElements.getName(all[i].constructor) !== null);
+		results.push(all[i].tagName.includes("-"));
 	}
 	const end = performance.now();
 	window.tachometerResult = end - start;

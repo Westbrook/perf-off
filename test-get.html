@@ -1,13 +1,17 @@
 <div id="root"></div>
 <script type="module">
-	import { build } from './build.js';
+	import { build } from "./build.js";
 	const root = document.querySelector("#root");
 	build(root);
-	const all = [...document.querySelectorAll('*')];
+	const all = [...document.querySelectorAll("*")];
+	const results = [];
 	const start = performance.now();
 	for (let i = 0; i < all.length; i++) {
-		console.log(customElements.get(all[i].localName))
+		results.push(customElements.get(all[i].tagName));
 	}
 	const end = performance.now();
 	window.tachometerResult = end - start;
+
+	console.log(window.tachometerResult);
+	document.body.textContent = window.tachometerResult;
 </script>
