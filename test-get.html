@@ -4,10 +4,12 @@
 	const root = document.querySelector("#root");
 	build(root);
 	const all = [...document.querySelectorAll('*')];
+	const results = [];
 	const start = performance.now();
 	for (let i = 0; i < all.length; i++) {
-		console.log(customElements.get(all[i].localName))
+		results.push(customElements.get(all[i].localName))
 	}
 	const end = performance.now();
 	window.tachometerResult = end - start;
+	console.log(results, window.tachometerResult);
 </script>

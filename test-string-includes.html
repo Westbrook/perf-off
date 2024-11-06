@@ -3,7 +3,7 @@
 	import { build } from './build.js';
 
 	function isCustomElement(tagName) {
-		if (tagName.indexOf('-') === -1) {
+		if (tagName.includes('-') === -1) {
 			return false;
 		}
 		switch (tagName) {
