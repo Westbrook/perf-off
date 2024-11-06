@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-	"tachometer:firefox": "tachometer --sample-size=100 --measure=global --browser=firefox-headless test-*",
-	"tachometer:safari": "tachometer --sample-size=100 --measure=global --browser=safari test-*",
-	"tachometer": "tachometer --sample-size=100 --measure=global --browser=chrome-headless test-*",
+	"tachometer:firefox": "tachometer --measure=global --browser=firefox-headless --timeout=0 test-*",
+	"tachometer:safari": "tachometer --measure=global --browser=safari --timeout=0 test-*",
+	"tachometer": "tachometer --measure=global --browser=chrome-headless --timeout=0 test-*",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

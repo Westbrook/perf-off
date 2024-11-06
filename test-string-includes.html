@@ -31,7 +31,8 @@
 	const results = [];
 	const start = performance.now();
 	for (let i = 0; i < all.length; i++) {
-		results.push(isCustomElement(all[i].tagName));
+		const el = all[i];
+		results.push(isCustomElement(el.tagName));
 	}
 	const end = performance.now();
 	window.tachometerResult = end - start;

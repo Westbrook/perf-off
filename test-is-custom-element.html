@@ -2,13 +2,13 @@
 <script type="module">
 	import { build } from './build.js';
 	const root = document.querySelector("#root");
-	build(root);
+	build(root, true);
 	const all = [...document.querySelectorAll('*')];
 	const results = [];
 	const start = performance.now();
 	for (let i = 0; i < all.length; i++) {
 		const el = all[i];
-		results.push(customElements.get(el.getAttribute('is') || el.localName))
+		results.push(el.isCustomElement)
 	}
 	const end = performance.now();
 	window.tachometerResult = end - start;
